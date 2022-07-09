@@ -7,10 +7,10 @@ import javax.swing.table.DefaultTableModel;
 import org.w3c.dom.*;
 
 public class Artista extends Item {
-    
+
     String tipo;
     String pais;
-    
+
     public void actualizar(String[] datos) {
         if (datos != null && datos.length >= 3) {
             this.nombre = datos[0];
@@ -22,12 +22,13 @@ public class Artista extends Item {
     //********* Atributos estaticos *********
     public static List<Artista> artistas;
     public static Document dXML;
+    public static EscuchadorEventoSeleccion escuchadorEventoSeleccion;
 
     //********* Metodos estaticos *********
     public static void obtener() {
         //Instanciar la coleccion de artistas
         artistas = new ArrayList<>();
-        
+
         if (dXML != null) {
             //Consultar los nodos de artista
             NodeList nlArtista = dXML.getElementsByTagName("Artista");
@@ -35,7 +36,7 @@ public class Artista extends Item {
             for (int i = 0; i < nlArtista.getLength(); i++) {
                 if (nlArtista.item(i).getNodeType() == Node.ELEMENT_NODE) {
                     Element nodo = (Element) nlArtista.item(i);
-                    
+
                     String[] datos = new String[3];
                     //Consultar el nombre del artista en elñ respectivo nodo
                     NodeList nl = nodo.getElementsByTagName("Nombre");
@@ -55,21 +56,22 @@ public class Artista extends Item {
             }
         }
     }
-    
+
     public static void mostrar(JTable tbl) {
         String[] encabezados = new String[]{"Nombre", "Tipo", "Pais"};
-        
+
         String[][] datos = new String[artistas.size()][encabezados.length];
-        
+
         for (int i = 0; i < artistas.size(); i++) {
             Artista a = artistas.get(i);
             datos[i][0] = a.nombre;
             datos[i][1] = a.tipo;
             datos[i][2] = a.pais;
         }
-        
+
         tbl.setModel(new DefaultTableModel(datos, encabezados));
-        
+        escuchadorEventoSeleccion = new EscuchadorEventoSeleccion(tbl);
+        tbl.getSelectionModel().addListSelectionListener(escuchadorEventoSeleccion);
     }
-    
+
 }

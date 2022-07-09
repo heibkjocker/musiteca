@@ -1,6 +1,8 @@
 package musiteca;
 
 import java.util.*;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import org.w3c.dom.*;
 
 public class Cancion extends Item {
@@ -12,9 +14,14 @@ public class Cancion extends Item {
     public void actualizar(String[] datos) {
         if (datos != null && datos.length >= 4) {
             this.nombre = datos[0];
-            this.genero = datos[1];
-            this.duracion = datos[2];
-            this.año = Integer.parseInt(datos[3]);
+            this.duracion = datos[1];
+            try {
+                this.año = Integer.parseInt(datos[2]);
+            } catch (Exception e) {
+                this.año = 0;
+            }
+
+            this.genero = datos[3];
         }
     }
 
@@ -63,6 +70,25 @@ public class Cancion extends Item {
                 }
             }
         }
+    }
+
+    public static void mostrar(JTable tbl) {
+        String[] encabezados = new String[]{"Titulo", "Duracion", "Año", "Genero"};
+
+        String[][] datos = new String[canciones.size()][encabezados.length];
+
+        for (int i = 0; i < canciones.size(); i++) {
+            Cancion c = canciones.get(i);
+            datos[i][0] = c.nombre;
+            datos[i][1] = c.duracion;
+            datos[i][2] = String.valueOf(c.año);
+            datos[i][3] = c.genero;
+
+        }
+
+        tbl.setModel(new DefaultTableModel(datos, encabezados));
+        tbl.getSelectionModel().removeListSelectionListener(Artista.escuchadorEventoSeleccion);
+
     }
 
 }
