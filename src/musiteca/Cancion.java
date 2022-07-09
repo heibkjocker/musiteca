@@ -10,6 +10,7 @@ public class Cancion extends Item {
     String genero;
     String duracion;
     int año;
+    String nombreArtista;
 
     public void actualizar(String[] datos) {
         if (datos != null && datos.length >= 4) {
@@ -22,12 +23,25 @@ public class Cancion extends Item {
             }
 
             this.genero = datos[3];
+
         }
+    }
+
+    public void actualizar(String[] datos, String nombreArtista) {
+        actualizar(datos);
+        this.nombreArtista = nombreArtista;
+    }
+
+    public void reproducir() {
+        String nombreArchivo = rutaCanciones + "/" + this.nombreArtista + " - " + this.nombre + ".mp3";
+        
+        ReproductorMP3.reproducir(nombreArchivo);
     }
 
     //********* Atributos estaticos *********
     public static List<Cancion> canciones;
     public static Document dXML;
+    public static String rutaCanciones;
 
     //********* Metodos estaticos *********
     public static void obtener(Artista artista) {
@@ -62,7 +76,7 @@ public class Cancion extends Item {
                             datos[3] = nl.item(0).getTextContent();
 
                             Cancion c = new Cancion();
-                            c.actualizar(datos);
+                            c.actualizar(datos, artista.nombre);
                             //Agregar el artista a la lista
                             canciones.add(c);
                         }

@@ -5,6 +5,8 @@
  */
 package musiteca;
 
+import java.io.BufferedReader;
+
 /**
  *
  * @author USUARIO
@@ -16,13 +18,22 @@ public class FrmMusiteca extends javax.swing.JFrame {
      */
     public FrmMusiteca() {
         initComponents();
+        Cancion.rutaCanciones = System.getProperty("user.dir");
+        Artista.rutaFotos = System.getProperty("user.dir");
+        String nombreArchivoRutas = System.getProperty("user.dir") + "/src/datos/rutas.txt";
+        BufferedReader br = Archivo.abrirArchivo(nombreArchivoRutas);
+        try {
+            Cancion.rutaCanciones = br.readLine();
+            Artista.rutaFotos = br.readLine();
+        } catch (Exception e) {
 
+        }
         String nombreArchivoXML = "file:///" + System.getProperty("user.dir") + "/src/datos/Musiteca.xml";
 
         Artista.dXML = Archivo.abrirDocumentoXML(nombreArchivoXML);
         Cancion.dXML = Artista.dXML;
         Artista.obtener();
-        Artista.mostrar(tblMusiteca);
+        Artista.mostrar(tblMusiteca, pnlFoto);
     }
 
     /**
@@ -36,9 +47,11 @@ public class FrmMusiteca extends javax.swing.JFrame {
 
         jToolBar1 = new javax.swing.JToolBar();
         btnRegresar = new javax.swing.JButton();
+        btnReproducir = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblMusiteca = new javax.swing.JTable();
+        pnlFoto = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -56,6 +69,18 @@ public class FrmMusiteca extends javax.swing.JFrame {
         });
         jToolBar1.add(btnRegresar);
 
+        btnReproducir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Reproducir.png"))); // NOI18N
+        btnReproducir.setToolTipText("Reproducir cancion");
+        btnReproducir.setFocusable(false);
+        btnReproducir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnReproducir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnReproducir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReproducirActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnReproducir);
+
         jSplitPane1.setDividerLocation(400);
 
         tblMusiteca.setModel(new javax.swing.table.DefaultTableModel(
@@ -72,6 +97,19 @@ public class FrmMusiteca extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tblMusiteca);
 
         jSplitPane1.setLeftComponent(jScrollPane1);
+
+        javax.swing.GroupLayout pnlFotoLayout = new javax.swing.GroupLayout(pnlFoto);
+        pnlFoto.setLayout(pnlFotoLayout);
+        pnlFotoLayout.setHorizontalGroup(
+            pnlFotoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 288, Short.MAX_VALUE)
+        );
+        pnlFotoLayout.setVerticalGroup(
+            pnlFotoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 314, Short.MAX_VALUE)
+        );
+
+        jSplitPane1.setRightComponent(pnlFoto);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -92,8 +130,22 @@ public class FrmMusiteca extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-        Artista.mostrar(tblMusiteca);
+        Artista.mostrar(tblMusiteca, pnlFoto);
     }//GEN-LAST:event_btnRegresarActionPerformed
+
+    boolean reproduciendo = false;
+
+    private void btnReproducirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReproducirActionPerformed
+        if (reproduciendo) {
+            reproduciendo = false;
+            ReproductorMP3.detener();
+        } else {
+            if (tblMusiteca.getSelectedRow() >= 0) {
+                Cancion.canciones.get(tblMusiteca.getSelectedRow()).reproducir();
+                reproduciendo = true;
+            }
+        }
+    }//GEN-LAST:event_btnReproducirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -132,9 +184,11 @@ public class FrmMusiteca extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegresar;
+    private javax.swing.JButton btnReproducir;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JPanel pnlFoto;
     private javax.swing.JTable tblMusiteca;
     // End of variables declaration//GEN-END:variables
 }
